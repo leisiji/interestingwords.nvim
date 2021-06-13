@@ -2,7 +2,7 @@ local M = {}
 local fn = vim.fn
 local colors = {'#8CCBEA', '#A4E57E', '#FFDB72', '#FF7272', '#FFB3FF', '#9999FF'}
 -- save matchadd id words_group, its item struct is {word, id}
-local words_array = vim.w.words_array
+local words_array = vim.b.words_array
 
 -- return: found, index
 -- If found the word, then return {true, index}
@@ -11,13 +11,13 @@ local words_array = vim.w.words_array
 local function get_word_index(word)
   local index = 1
   local min_nil_index = 0
-  for key, value in pairs(words_array) do
-    if value ~= nil then
-      if value[1] == word then
-        return true, key
+  for i = 1, #words_array do
+    if words_array[i] ~= nil then
+      if words_array[i][1] == word then
+        return true, i
       end
     elseif min_nil_index == 0 then
-      min_nil_index = key
+      min_nil_index = i
     end
     index = index + 1
   end
@@ -60,10 +60,10 @@ function M.toggle(word)
 end
 
 function M.uncolor_all()
-  for _, value in pairs(words_array) do
+  for key, value in pairs(words_array) do
     fn.matchdelete(value[2])
+    words_array[key] = nil
   end
-  vim.w.words_array = nil
 end
 
 function M.navigate(word, direction)
