@@ -2,7 +2,6 @@ local M = {}
 local fn = vim.fn
 local colors = {'#8CCBEA', '#A4E57E', '#FFDB72', '#FF7272', '#FFB3FF', '#9999FF'}
 -- save matchadd id words_group, its item struct is {word, id}
-local words_array = vim.b.words_array
 
 -- return: found, index
 -- If found the word, then return {true, index}
@@ -11,9 +10,11 @@ local words_array = vim.b.words_array
 local function get_word_index(word)
   local index = 1
   local min_nil_index = 0
-  for i = 1, #words_array do
-    if words_array[i] ~= nil then
-      if words_array[i][1] == word then
+  local words = vim.w.words_array
+
+  for i = 1, #words do
+    if words[i] ~= nil then
+      if words[i][1] == word then
         return true, i
       end
     elseif min_nil_index == 0 then
@@ -30,6 +31,7 @@ local function get_word_index(word)
 end
 
 local function color_word(index, word)
+  local words = vim.w.words_array
   if index > #colors then
     print('Number of highlight-word is greater than ' .. #colors)
     return
@@ -38,17 +40,20 @@ local function color_word(index, word)
   local hi = 'Interestingwords_' .. index
   vim.cmd(string.format('hi! %s guibg=%s guifg=Black', hi, colors[index]))
   local id = fn.matchadd(hi, string.format([[\V\<%s\>]], word), 11)
-  words_array[index] = { word, id }
+  words[index] = { word, id }
+  vim.w.words_array = words
 end
 
 local function uncolor_word(index)
-  fn.matchdelete(words_array[index][2])
-  words_array[index] = nil
+  local words = vim.w.words_array
+  fn.matchdelete(words[index][2])
+  words[index] = {}
+  vim.w.words_array = words
 end
 
 function M.toggle(word)
-  if words_array == nil then
-    words_array = {}
+  if vim.w.words_array == nil then
+    vim.w.words_array = {}
   end
 
   local found, index = get_word_index(word)
@@ -60,10 +65,15 @@ function M.toggle(word)
 end
 
 function M.uncolor_all()
-  for key, value in pairs(words_array) do
-    fn.matchdelete(value[2])
-    words_array[key] = nil
+  local words = vim.w.words_array
+  if words == nil then
+    return
   end
+  for key, value in pairs(words) do
+    pcall(fn.matchdelete, value[2])
+    words[key] = nil
+  end
+  vim.w.words_array = words
 end
 
 function M.navigate(word, direction)
