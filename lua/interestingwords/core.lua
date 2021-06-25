@@ -13,7 +13,7 @@ local function get_word_index(word)
   local words = vim.w.words_array
 
   for i = 1, #words do
-    if words[i] ~= nil then
+    if words[i] ~= nil and #(words[i]) ~= 0 then
       if words[i][1] == word then
         return true, i
       end
