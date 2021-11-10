@@ -14,6 +14,13 @@ Interestingwords --remove_all
 Interestingwords --navigate [b]
 ```
 
+Configuration (lua):
+
+```lua
+vim.g.interestingwords_colors =
+    {'#8CCBEA', '#A4E57E', '#FFDB72', '#FF7272', '#FFB3FF', '#9999FF'}
+```
+
 ## Inspiration
 
 [vim-interestingwords](https://github.com/lfv89/vim-interestingwords)
