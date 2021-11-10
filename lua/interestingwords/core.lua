@@ -1,6 +1,6 @@
 local M = {}
 local fn = vim.fn
-local colors = {'#8CCBEA', '#A4E57E', '#FFDB72', '#FF7272', '#FFB3FF', '#9999FF'}
+local colors = vim.g.interestingwords_colors or {'#8CCBEA', '#A4E57E', '#FFDB72', '#FF7272', '#FFB3FF', '#9999FF'}
 -- save matchadd id words_group, its item struct is {word, id}
 
 -- return: found, index
