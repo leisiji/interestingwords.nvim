@@ -1,7 +1,13 @@
 local M = {}
 local fn = vim.fn
-local colors = vim.g.interestingwords_colors or {'#8CCBEA', '#A4E57E', '#FFDB72', '#FF7272', '#FFB3FF', '#9999FF'}
+local colors = vim.g.interestingwords_colors or { "#8CCBEA", "#A4E57E", "#FFDB72", "#FF7272", "#FFB3FF", "#9999FF" }
+local highlight_prefix = "Interestingwords_"
 -- save matchadd id words_group, its item struct is {word, id}
+
+-- init highlight
+for index, value in ipairs(colors) do
+  vim.api.nvim_set_hl(0, highlight_prefix .. index, { bg = value, fg = "Black" })
+end
 
 -- return: found, index
 -- If found the word, then return {true, index}
@@ -13,7 +19,7 @@ local function get_word_index(word)
   local words = vim.w.words_array
 
   for i = 1, #words do
-    if words[i] ~= nil and #(words[i]) ~= 0 then
+    if words[i] ~= nil and #words[i] ~= 0 then
       if words[i][1] == word then
         return true, i
       end
@@ -33,12 +39,11 @@ end
 local function color_word(index, word)
   local words = vim.w.words_array
   if index > #colors then
-    print('Number of highlight-word is greater than ' .. #colors)
+    print("Number of highlight-word is greater than " .. #colors)
     return
   end
 
-  local hi = 'Interestingwords_' .. index
-  vim.cmd(string.format('hi! %s guibg=%s guifg=Black', hi, colors[index]))
+  local hi = highlight_prefix .. index
   local id = fn.matchadd(hi, string.format([[\V\<%s\>]], word), 11)
   words[index] = { word, id }
   vim.w.words_array = words
